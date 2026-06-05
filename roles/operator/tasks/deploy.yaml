@@ -1,0 +1,16 @@
+---
+
+- name: Deploy CRD
+  kubernetes.core.k8s:
+    definition: "{{ lookup('template', 'crd.yaml.j2') }}"
+    wait: yes
+
+- name: Deploy objects to operator Namespace ({{ svo_namespace }})
+  kubernetes.core.k8s:
+    definition: "{{ lookup('template', item) }}"
+    wait: yes
+  loop:
+  - namespace.yaml.j2
+  - sa.yaml.j2
+  - rbac.yaml.j2
+  - deployment.yaml.j2

@@ -1,0 +1,9 @@
+---
+
+# The Viz Operator Pod Security Policy (PSP)
+svo_sa_psp: im-core-unrestricted
+
+svo_cpu_request: 100m
+svo_mem_request: 256Mi
+svo_cpu_limit: 1000m
+svo_mem_limit: 256Mi

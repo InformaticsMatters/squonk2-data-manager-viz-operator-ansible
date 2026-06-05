@@ -1,0 +1,24 @@
+---
+
+# A Data-Manager-compliant ConfigMap.
+# This is deployed to the DM namespace and provides configuration material.
+# The configMap must have the same name as the application CRD,
+# e.g. 'datavisualisations.squonk.it'.
+#
+# The 'data' section provides a 'dm-app.config' key
+# with a value that's essentially a Python Configparser file using '='
+# as key/value delimiter.
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: datavisualisations.squonk.it
+  namespace: {{ svo_dm_namespace }}
+data:
+  dm-app.config: |
+    [cost]
+    # Charging configuration
+    cost = {{ svo_cost_cost }}
+    period = {{ svo_cost_period }}
+    unit = PxGi
+    pro rata = yes

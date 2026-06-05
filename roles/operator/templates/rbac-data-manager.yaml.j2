@@ -1,0 +1,39 @@
+---
+# Provide a Data Visualisation Data Manager Application Role.
+# The Data Manger needs to be able to...
+# - 'get'
+# - 'list'
+# - 'watch'
+# - 'create'
+# - 'delete'
+# ...this Custom Resource (in the Data Manager API namespace).
+# Each application needs to provide their own Role
+# (and a RoleBinding to the 'data-manager' ServiceAccount).
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: data-manager-viz-operator
+  namespace: {{ svo_dm_namespace }}
+rules:
+- apiGroups: [squonk.it]
+  resources: [datavisualisations]
+  verbs: [get, list, watch, create, delete]
+
+---
+# Bind the Data Visualisation Application Role
+# to the Data Manager ServiceAccount ('data-manager')
+# in the Data Manager API namespace.
+# Each Application needs to provide a similar RoleBinding.
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: data-manager-viz-operator
+  namespace: {{ svo_dm_namespace }}
+roleRef:
+  kind: Role
+  name: data-manager-viz-operator
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: data-manager
+  namespace: {{ svo_dm_namespace }}

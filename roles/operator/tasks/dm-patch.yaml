@@ -1,0 +1,50 @@
+---
+
+- name: Get Data Manager Namespace ({{ svo_dm_namespace }})
+  kubernetes.core.k8s_info:
+    kind: Namespace
+    name: "{{ svo_dm_namespace }}"
+  register: ns_result
+
+- name: Assert Namespace ({{ svo_dm_namespace }})
+  ansible.builtin.assert:
+    that:
+    - ns_result.resources | length == 1
+
+- name: Get Data Manager ServiceAccount
+  kubernetes.core.k8s_info:
+    kind: ServiceAccount
+    name: data-manager
+    namespace: "{{ svo_dm_namespace }}"
+  register: sa_result
+
+- name: Assert ServiceAccount
+  ansible.builtin.assert:
+    that:
+    - sa_result.resources | length == 1
+
+- name: Deploy Data Manager Material
+  kubernetes.core.k8s:
+    definition: "{{ lookup('template', item) }}"
+    wait: yes
+  loop:
+  - rbac-data-manager.yaml.j2
+  - configmap-data-manager.yaml.j2
+
+# The visualisation image is private (on ghcr), so the Data Manager namespace
+# needs an ImagePullSecret. Its base64-encoded value is sensitive, so we fail
+# loudly if it is missing and never log the definition.
+
+- name: Assert image-pull Secret provided
+  ansible.builtin.assert:
+    that:
+    - svo_github_image_pull_secret | length > 0
+    fail_msg: >-
+      svo_github_image_pull_secret must be set (the base64-encoded
+      .dockerconfigjson used to pull the private visualisation image).
+
+- name: Deploy image-pull Secret ({{ svo_image_pull_secret_name }})
+  kubernetes.core.k8s:
+    definition: "{{ lookup('template', 'secret.yaml.j2') }}"
+    wait: yes
+  no_log: true

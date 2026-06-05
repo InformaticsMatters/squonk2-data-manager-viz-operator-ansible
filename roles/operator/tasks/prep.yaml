@@ -1,0 +1,99 @@
+---
+
+# Common playbook preparation.
+#
+# We expect: -
+#
+# - kubeconfig (defined, that might point to a KUBECONFIG file)
+#
+# We process: -
+#
+# - K8S_AUTH_HOST (optional)
+# - K8S_AUTH_API_KEY (optional)
+# - KUBECONFIG (optional)
+#
+# One method of Kubernetes authentication must be provided.
+# On exit the following variables have been set (although some may be blank/None): -
+#
+# - k8s_auth_api_key
+# - k8s_auth_host
+# - k8s_auth_kubeconfig
+
+- name: Assert inputs
+  ansible.builtin.assert:
+    that:
+    - kubeconfig is defined
+
+# Expose ansible version
+- name: Display Ansible version
+  ansible.builtin.debug:
+    var: ansible_version.full
+
+# Expose all the installed Python modules...
+
+- name: Capture pip freeze
+  ansible.builtin.command: pip freeze
+  register: freeze
+  changed_when: false
+
+- name: Display pip freeze
+  ansible.builtin.debug:
+    var: freeze.stdout_lines
+
+# Kubernetes credentials ------------------------------------------------------
+
+# If a kubeconfig value is set we use that.
+# Otherwise if K8S_AUTH_HOST is defined we use that (AWX).
+# Otherwise if KUBECONFIG is defined we use that.
+
+- name: Load K8S_AUTH_HOST and K8S_AUTH_API_KEY
+  ansible.builtin.set_fact:
+    k8s_auth_host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+    k8s_auth_api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+
+- name: Use kubernetes authentication (kubeconfig)
+  ansible.builtin.set_fact:
+    k8s_auth_kubeconfig: "{{ kubeconfig }}"
+  when: kubeconfig | string | length > 0
+
+- name: Use kubernetes authentication (k8s_auth_host)
+  ansible.builtin.assert:
+    that:
+    - k8s_auth_host | string | length > 0
+    - k8s_auth_api_key | string | length > 0
+  when:
+  - kubeconfig | string | length == 0
+  - k8s_auth_host | string | length > 0
+
+- name: Use kubernetes authentication (KUBECONFIG)
+  ansible.builtin.set_fact:
+    k8s_auth_kubeconfig: "{{ lookup('env', 'KUBECONFIG') }}"
+  when:
+  - kubeconfig | string | length == 0
+  - k8s_auth_host | string | length == 0
+
+- name: Kubernetes authentication must be set
+  ansible.builtin.assert:
+    that:
+    - k8s_auth_kubeconfig is defined or k8s_auth_host is defined
+    msg: "You must provide a means to authenticate against Kubernetes"
+
+# We 'set' all the expected variables now (even to None)
+# to avoid the following playbooks having to apply 'default(none)'.
+# Basically we 'define' all three variables here,
+# whether they have a value or not, so any following playbook
+# won't encounter a 'variable not defined error'.
+
+- name: Set variables (with defaults)
+  ansible.builtin.set_fact:
+    k8s_auth_api_key: "{{ k8s_auth_api_key | default(None) }}"
+    k8s_auth_host: "{{ k8s_auth_host | default(None) }}"
+    k8s_auth_kubeconfig: "{{ k8s_auth_kubeconfig | default(None) }}"
+
+- name: Display Host
+  ansible.builtin.debug:
+    var: k8s_auth_host
+
+- name: Display KUBECONFIG
+  ansible.builtin.debug:
+    var: k8s_auth_kubeconfig

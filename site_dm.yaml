@@ -1,0 +1,8 @@
+---
+- name: Localhost
+  hosts: localhost
+  tasks:
+  - name: Operator (DM)
+    ansible.legacy.include_role:
+      name: operator
+      tasks_from: dm.yaml

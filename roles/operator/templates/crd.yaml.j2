@@ -1,0 +1,98 @@
+---
+kind: CustomResourceDefinition
+apiVersion: apiextensions.k8s.io/v1
+metadata:
+  name: datavisualisations.squonk.it
+  annotations:
+    data-manager.informaticsmatters.com/application: 'yes'
+    data-manager.informaticsmatters.com/application-namespaces: '{{ svo_namespaces }}'
+    data-manager.informaticsmatters.com/application-url-location: viz.url
+spec:
+  conversion:
+    strategy: None
+  group: squonk.it
+  names:
+    kind: DataVisualisation
+    listKind: DataVisualisationList
+    plural: datavisualisations
+    singular: datavisualisation
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - description: URL for accessing the visualisation instance.
+      jsonPath: .status.viz.url
+      name: URL
+      type: string
+    name: v1
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              # All DataManager-injected material
+              # will be namespaced by the property 'imDataManager'
+              imDataManager:
+                type: object
+                properties:
+                  taskId:
+                    type: string
+                  image:
+                    type: string
+                  ingressClass:
+                    type: string
+                  ingressDomain:
+                    type: string
+                  ingressTlsSecret:
+                    type: string
+                  ingressProxyBodySize:
+                    type: string
+                  resources:
+                    type: object
+                    properties:
+                      limits:
+                        type: object
+                        properties:
+                          cpu:
+                            type: string
+                          memory:
+                            type: string
+                          storage:
+                            type: string
+                      requests:
+                        type: object
+                        properties:
+                          cpu:
+                            type: string
+                          memory:
+                            type: string
+                          storage:
+                            type: string
+                  serviceAccountName:
+                    type: string
+                  securityContext:
+                    type: object
+                    properties:
+                      runAsUser:
+                        type: integer
+                      runAsGroup:
+                        type: integer
+                      fsGroup:
+                        type: integer
+                  project:
+                    type: object
+                    properties:
+                      claimName:
+                        type: string
+                      id:
+                        type: string
+                  labels:
+                    type: array
+                    items:
+                      type: string
+          status:
+            type: object
+            x-kubernetes-preserve-unknown-fields: true
+    served: true
+    storage: true

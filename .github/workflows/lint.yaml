@@ -1,0 +1,51 @@
+---
+name: lint
+
+# Actions that take place on branches
+# or are driven by pull-requests to the main/master branch.
+# Here we build container images but don't push them
+# and therefore do not require docker credentials.
+
+# -----------------
+# Control variables (GitHub Secrets)
+# -----------------
+#
+# (n/a)
+#
+# -----------
+# Environment (GitHub Environments)
+# -----------
+#
+# Environment         (n/a)
+
+on:
+  push:
+    branches:
+    - '*'
+    tags-ignore:
+    - '*'
+  schedule:
+  # Build every Sunday (0) at 4:45pm
+  - cron: '45 16 * * 0'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install yamllint pre-commit
+    - name: Run pre-commit (all files)
+      run: |
+        pre-commit run --all-files
+    - name: Lint
+      run: |
+        yamllint .
+        find . -type f -name '*.yaml.j2' -exec yamllint {} +

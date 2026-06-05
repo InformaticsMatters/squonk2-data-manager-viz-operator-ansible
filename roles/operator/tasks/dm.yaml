@@ -1,0 +1,42 @@
+---
+
+# A play to deploy objects to the chosen Data Manager namespace.
+# In this case it's a Role and RoleBinding, the application ConfigMap
+# and the (private image) ImagePullSecret.
+
+- name: Prep
+  ansible.builtin.include_tasks: prep.yaml
+  vars:
+    kubeconfig: "{{ svo_kubeconfig }}"
+
+# Include sensitive (Ansible Vault) variables based on the installation name.
+# We include 'sensitive-local.vault' variables if the installation name is 'local'.
+# The user will need to provide the vault password.
+
+- name: Include sensitive (vault) variables ({{ svo_installation_name }})
+  ansible.builtin.include_vars:
+    file: sensitive-{{ svo_installation_name }}.vault
+  when: svo_installation_name | length > 0
+
+# Check the Data Manager Namespace and Service Account exists...
+
+- name: Display namespace
+  ansible.builtin.debug:
+    var: svo_dm_namespace
+
+- name: Deploy DataManager RBAC objects (kubeconfig)
+  when: svo_kubeconfig != 'SetMe'
+  module_defaults:
+    group/k8s:
+      kubeconfig: "{{ svo_kubeconfig }}"
+  block:
+
+  - name: Patch the Data Manager (kubeconfig)
+    ansible.builtin.include_tasks: dm-patch.yaml
+
+- name: Deploy DataManager RBAC objects (k8s API)
+  when: svo_kubeconfig == 'SetMe'
+  block:
+
+  - name: Patch the Data Manager (k8s API)
+    ansible.builtin.include_tasks: dm-patch.yaml

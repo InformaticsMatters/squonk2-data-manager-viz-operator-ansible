@@ -1,0 +1,37 @@
+---
+
+- name: Prep
+  ansible.builtin.include_tasks: prep.yaml
+  vars:
+    kubeconfig: "{{ svo_kubeconfig }}"
+
+# Include sensitive (Ansible Vault) variables based on the installation name.
+# We include 'sensitive-local.vault' variables if the installation name is 'local'.
+# The user will need to provide the vault password.
+
+- name: Include sensitive (vault) variables ({{ svo_installation_name }})
+  ansible.builtin.include_vars:
+    file: sensitive-{{ svo_installation_name }}.vault
+  when: svo_installation_name | length > 0
+
+- name: Assert operator version defined
+  ansible.builtin.assert:
+    that:
+    - svo_image_tag | length > 0
+    - svo_image_tag != 'SetMe'
+
+- name: Go
+  module_defaults:
+    group/k8s:
+      host: "{{ k8s_auth_host }}"
+      api_key: "{{ k8s_auth_api_key }}"
+      kubeconfig: "{{ k8s_auth_kubeconfig }}"
+  block:
+
+  - name: Deploy
+    ansible.builtin.include_tasks: deploy.yaml
+    when: svo_state | string == 'present'
+
+  - name: Undeploy
+    ansible.builtin.include_tasks: undeploy.yaml
+    when: svo_state | string == 'absent'

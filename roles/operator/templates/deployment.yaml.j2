@@ -1,0 +1,78 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  namespace: {{ svo_namespace }}
+  name: viz-operator
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      application: viz-operator
+  template:
+    metadata:
+      labels:
+        application: viz-operator
+    spec:
+{% if svo_priority_class %}
+      priorityClassName: {{ svo_priority_class }}
+{% endif %}
+      serviceAccountName: viz-operator
+
+      # Prefer 'application' nodes before 'core'
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: informaticsmatters.com/purpose-application
+                operator: Exists
+
+      containers:
+      - name: viz-operator
+        image: {{ svo_image }}:{{ svo_image_tag }}
+{% if svo_image_tag in ['stable', 'latest'] %}
+        imagePullPolicy: Always
+{% else %}
+        imagePullPolicy: IfNotPresent
+{% endif %}
+        env:
+{% if svo_apply_pod_priority_class %}
+        - name: SVO_APPLY_POD_PRIORITY_CLASS
+          value: 'true'
+        - name: SVO_DEFAULT_POD_PRIORITY_CLASS
+          value: '{{ svo_default_pod_priority_class }}'
+{% endif %}
+        - name: SVO_POD_NODE_SELECTOR_KEY
+          value: '{{ svo_pod_node_selector_key }}'
+        - name: SVO_POD_NODE_SELECTOR_VALUE
+          value: '{{ svo_pod_node_selector_value }}'
+        - name: INGRESS_DOMAIN
+          value: {{ svo_ingress_domain }}
+{% if svo_ingress_tls_secret %}
+        - name: INGRESS_TLS_SECRET
+          value: {{ svo_ingress_tls_secret }}
+{% else %}
+        - name: INGRESS_CERT_ISSUER
+          value: {{ svo_ingress_cert_issuer }}
+{% endif %}
+        # The name of the ImagePullSecret (deployed to the Data Manager
+        # namespace) the operator gives to the instances it launches so they
+        # can pull the private visualisation image from ghcr.
+        - name: SVO_IMAGE_PULL_SECRET
+          value: {{ svo_image_pull_secret_name }}
+        resources:
+          requests:
+            cpu: {{ svo_cpu_request }}
+            memory: {{ svo_mem_request }}
+{% if svo_cpu_limit or svo_mem_limit %}
+          limits:
+{% if svo_cpu_limit %}
+            cpu: {{ svo_cpu_limit }}
+{% endif %}
+{% if svo_mem_limit %}
+            memory: {{ svo_mem_limit }}
+{% endif %}
+{% endif %}
