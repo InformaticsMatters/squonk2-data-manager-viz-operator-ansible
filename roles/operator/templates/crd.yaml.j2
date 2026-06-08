@@ -35,10 +35,12 @@ spec:
               # will be namespaced by the property 'imDataManager'
               imDataManager:
                 type: object
+                required:
+                - imageTag
                 properties:
                   taskId:
                     type: string
-                  image:
+                  imageTag:
                     type: string
                   ingressClass:
                     type: string
