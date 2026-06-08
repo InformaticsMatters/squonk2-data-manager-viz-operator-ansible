@@ -12,6 +12,12 @@
 # It also provides a 'dm-app.template' key - a JSON string (loaded by the
 # Data Manager with json.loads()) describing the user-definable application
 # variables a client can select. It is hard-coded for now.
+#
+# Finally it provides a 'dm-app.template.mapping' key - a JSON string (also
+# loaded with json.loads()) that tells the Data Manager where each template
+# property's value goes in the constructed Custom Resource. Each value is a
+# path (or list of paths) dotted and relative to 'spec.imDataManager', the
+# property under which the Data Manager injects the instance specification.
 
 kind: ConfigMap
 apiVersion: v1
@@ -54,4 +60,13 @@ data:
           "default": "1"
         }
       }
+    }
+  dm-app.template.mapping: |
+    {
+      "versions": "imageTag",
+      "cpu": "resources.limits.cpu",
+      "memory": [
+        "resources.limits.memory",
+        "resources.requests.memory"
+      ]
     }
