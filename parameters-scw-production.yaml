@@ -1,7 +1,7 @@
 ---
 svo_installation_name: scw-production
 
-svo_image_tag: '35.0.0-rc.1'
+svo_image_tag: '35.0.0-rc.2'
 svo_namespace: im-data-manager-viz-operator
 svo_namespaces: im-data-manager
 svo_ingress_domain: squonk.it
