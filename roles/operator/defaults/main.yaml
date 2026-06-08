@@ -6,7 +6,9 @@ svo_state: present
 
 # The installation name.
 # Used to select a 'sensitive-<name>.vault' file of sensitive (vault) variables
-# (e.g. 'sensitive-local.vault'). Leave blank to skip loading vault variables.
+# (e.g. 'sensitive-scw-production.vault'). The matching file must be present in
+# the role's 'vars' directory and is loaded when the playbooks run (you will be
+# prompted for the vault password). Leave blank to skip loading vault variables.
 svo_installation_name: ''
 
 # The kubernetes config file.
