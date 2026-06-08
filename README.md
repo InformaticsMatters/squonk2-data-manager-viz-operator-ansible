@@ -66,19 +66,21 @@ operator that match your needs. At a minimum set the operator image tag
 image-pull secret (`svo_github_image_pull_secret`). Sensitive values such as
 the image-pull secret should be supplied through an [Ansible Vault] file (a
 `sensitive-<name>.vault`, selected with `svo_installation_name`), never in
-plain text.
+plain text. Set `svo_installation_name` (e.g. to `scw-production`) so the
+playbooks load the matching `sensitive-<name>.vault`; you must then provide its
+vault password at run time with `--ask-vault-pass`.
 
 Then deploy, using Ansible, from the root of the project: -
 
     export PARAMS=parameters
-    ansible-playbook -e @${PARAMS}.yaml site.yaml
+    ansible-playbook --ask-vault-pass -e @${PARAMS}.yaml site.yaml
 
 That deploys the operator and its CRD to your chosen operator namespace
 (`svo_namespace`). To deploy the Data Manager RBAC, the application
 configuration and the image-pull Secret you need to run the `site_dm.yaml`
 playbook: -
 
-    ansible-playbook -e @${PARAMS}.yaml site_dm.yaml
+    ansible-playbook --ask-vault-pass -e @${PARAMS}.yaml site_dm.yaml
 
 >   If deploying to multiple Data Managers you should just need one operator
     and then deploy the `site_dm` material to each DM namespace. Remember to
@@ -87,7 +89,7 @@ playbook: -
 
 To remove the operator (assuming there are no operator-derived instances)...
 
-    ansible-playbook -e @${PARAMS}.yaml -e svo_state=absent site.yaml
+    ansible-playbook --ask-vault-pass -e @${PARAMS}.yaml -e svo_state=absent site.yaml
 
 >   The current Data Manager API assumes that once an Application (operator)
     has been installed it is not removed. So, removing the operator here

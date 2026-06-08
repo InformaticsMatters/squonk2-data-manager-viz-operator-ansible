@@ -10,8 +10,8 @@
     kubeconfig: "{{ svo_kubeconfig }}"
 
 # Include sensitive (Ansible Vault) variables based on the installation name.
-# We include 'sensitive-local.vault' variables if the installation name is 'local'.
-# The user will need to provide the vault password.
+# We include 'sensitive-scw-production.vault' variables if the installation name
+# is 'scw-production'. The user will need to provide the vault password.
 
 - name: Include sensitive (vault) variables ({{ svo_installation_name }})
   ansible.builtin.include_vars:
