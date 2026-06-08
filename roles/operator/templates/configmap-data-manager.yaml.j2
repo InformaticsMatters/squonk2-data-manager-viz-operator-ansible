@@ -37,10 +37,10 @@ data:
       "title": "The VizOperator Template",
       "description": "User-definable application variables for the viz application operator",
       "type": "object",
-      "required": ["versions"],
+      "required": ["version"],
       "properties": {
-        "versions": {
-          "title": "Viz application versions",
+        "version": {
+          "title": "Viz application version",
           "description": "The choice of viz application version.",
           "type": "string",
           "enum": ["0.1.4"]
@@ -63,7 +63,7 @@ data:
     }
   dm-app.template.mapping: |
     {
-      "versions": "imageTag",
+      "version": "imageTag",
       "cpu": "resources.limits.cpu",
       "memory": [
         "resources.limits.memory",
