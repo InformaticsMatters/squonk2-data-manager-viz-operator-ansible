@@ -87,6 +87,25 @@ playbook: -
     also adjust the annotations of the CRD so each DM namespace recognises it
     as a valid application.
 
+### Deploying to more than one Data Manager
+A single operator (one `site.yaml` run, one parameters file) can serve several
+Data Managers. To do this, run `site_dm.yaml` once per Data Manager namespace,
+reusing the same parameters file each time and overriding `svo_dm_namespace`
+on the command line with an extra `-e`: -
+
+    ansible-playbook --ask-vault-pass -e @${PARAMS}.yaml -e svo_dm_namespace=dm-api site_dm.yaml
+    ansible-playbook --ask-vault-pass -e @${PARAMS}.yaml -e svo_dm_namespace=dm-team-b site_dm.yaml
+
+>   **Order matters.** Ansible applies `-e` values left-to-right, so the
+    `-e svo_dm_namespace=…` override **must** come *after* the
+    `-e @${PARAMS}.yaml` file. If your parameters file also sets
+    `svo_dm_namespace`, putting the file last would override the value you
+    provided on the command line.
+
+If the parameters file already pins the namespace of your *primary* Data
+Manager, you can omit the override for that one and only add
+`-e svo_dm_namespace=…` for the *additional* Data Managers.
+
 To remove the operator (assuming there are no operator-derived instances)...
 
     ansible-playbook --ask-vault-pass -e @${PARAMS}.yaml -e svo_state=absent site.yaml
