@@ -1,9 +1,11 @@
 __pycache__
 .idea
 .coverage
+.ansible
 venv
 
 parameters.*
 
 **/*.swp
 **/.DS_Store
+**/*.password
