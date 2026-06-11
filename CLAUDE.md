@@ -10,10 +10,14 @@ same _look-and-feel_ as, the sibling
 [squonk2-data-manager-jupyter-operator-ansible] repository — consult that repo
 when a behaviour here is unclear.
 
-The operator itself lives in [squonk2-data-manager-viz-operator]; it watches
-`DataVisualisation` custom resources (`squonk.it/v1`, plural
-`datavisualisations`) and creates a Deployment, Service and Ingress running the
-private [squonk2-viz-app] image.
+The operator itself lives in [squonk2-data-manager-viz-operator] (the
+**upstream** repository); it watches `DataVisualisation` custom resources
+(`squonk.it/v1`, plural `datavisualisations`) and creates a Deployment, Service
+and Ingress running the private [squonk2-viz-app] image.
+
+See the **Related repositories** section of [README.md](README.md) for the full
+list of upstream and sibling projects (the operator, the viz app and
+components, the Jupyter operator, and the Data Manager).
 
 ## Layout
 

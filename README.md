@@ -22,6 +22,26 @@ The operator image (`informaticsmatters/data-manager-viz-operator`) is
 Manager namespace. The operator is given the *name* of that Secret through its
 `SVO_IMAGE_PULL_SECRET` environment variable.
 
+## Related repositories
+This repository only *deploys* the operator; the code it deploys, and the
+projects it sits alongside, live elsewhere: -
+
+- [squonk2-data-manager-viz-operator] — the **upstream** repository. It holds
+  the Kubernetes operator (image `informaticsmatters/data-manager-viz-operator`)
+  that this Ansible deploys. The operator watches `DataVisualisation` custom
+  resources (`squonk.it/v1`) and creates the Deployment, Service and Ingress
+  for each visualisation instance.
+- [squonk2-viz-app] — the **private** visualisation application image (on
+  `ghcr.io`) that the operator launches for each `DataVisualisation`. This is
+  why the `site_dm` playbook deploys an image-pull Secret.
+- [squonk2-viz-components] — front-end visualisation components used by the
+  viz app.
+- [squonk2-data-manager-jupyter-operator-ansible] — the **sibling** Ansible
+  repository this one is modelled on; consult it when behaviour here is
+  unclear. It deploys the equivalent [squonk2-data-manager-jupyter-operator].
+- [squonk2-data-manager] — the **Data Manager** itself, which orchestrates the
+  operators and the `DataVisualisation` resources they act on.
+
 ## Contributing
 The project uses: -
 
@@ -125,3 +145,9 @@ To remove the operator (assuming there are no operator-derived instances)...
 [pre-commit]: https://pre-commit.com
 [squonk2 jupyter operator]: https://github.com/InformaticsMatters/squonk2-data-manager-jupyter-operator-ansible
 [squonk2 viz operator]: https://github.com/InformaticsMatters/squonk2-data-manager-viz-operator
+[squonk2-data-manager]: https://github.com/InformaticsMatters/squonk2-data-manager
+[squonk2-data-manager-jupyter-operator]: https://github.com/InformaticsMatters/squonk2-data-manager-jupyter-operator
+[squonk2-data-manager-jupyter-operator-ansible]: https://github.com/InformaticsMatters/squonk2-data-manager-jupyter-operator-ansible
+[squonk2-data-manager-viz-operator]: https://github.com/InformaticsMatters/squonk2-data-manager-viz-operator
+[squonk2-viz-app]: https://github.com/InformaticsMatters/squonk2-viz-app
+[squonk2-viz-components]: https://github.com/InformaticsMatters/squonk2-viz-components
