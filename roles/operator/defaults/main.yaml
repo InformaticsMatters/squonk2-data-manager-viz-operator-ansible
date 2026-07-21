@@ -69,3 +69,9 @@ svo_github_image_pull_secret: ''
 # Costing information (exposed to the Data Manager through the ConfigMap)
 svo_cost_cost: '1.00'
 svo_cost_period: '1 hour'
+
+# Automatic termination of idle instances
+# (exposed to the Data Manager through the ConfigMap).
+# How long an instance must have been idle before the Data Manager
+# terminates it, expressed as text it can interpret (e.g. '90 minutes').
+svo_idle_terminate_after: '36 hours'

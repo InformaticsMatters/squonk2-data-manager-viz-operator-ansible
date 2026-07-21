@@ -33,6 +33,28 @@ data:
     period = {{ svo_cost_period }}
     unit = PxGi
     pro rata = yes
+    [idle]
+    # Automatic termination of idle instances.
+    # The Data Manager polls the instance's idle endpoint and terminates
+    # instances that have been idle for longer than 'terminate_after'
+    # (and instances that fail to answer for long enough).
+    #
+    # 'path' and 'port' are properties of the viz application image, which
+    # serves '/idle' on the only port it listens on. The path deliberately
+    # carries no instance prefix: the Data Manager polls through the
+    # instance's Service, which bypasses the Ingress.
+    #
+    # 'service_name' is not set. The Data Manager defaults it to the instance
+    # UUID, which is the name of the custom resource, and so also the name the
+    # operator gives the Service.
+    #
+    # NOTE: only viz application versions 0.3.2-3 and later serve '/idle'.
+    #       Earlier versions answer with a 404, which the Data Manager counts
+    #       as a failed query and, after a while, terminates the instance for.
+    #       Keep the version enum below free of earlier versions.
+    path = /idle
+    port = 5170
+    terminate_after = {{ svo_idle_terminate_after }}
   dm-app.template: |
     {
       "title": "The VizOperator Template",
@@ -44,7 +66,7 @@ data:
           "title": "Viz application version",
           "description": "The choice of viz application version.",
           "type": "string",
-          "enum": ["0.1.6", "0.1.7", "0.2.0", "0.3.0"]
+          "enum": ["0.3.2-3"]
         },
         "memory": {
           "title": "Memory request",
