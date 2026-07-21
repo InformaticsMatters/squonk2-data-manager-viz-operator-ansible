@@ -61,6 +61,14 @@ components, the Jupyter operator, and the Data Manager).
   `application-url-location` set to `viz.url`.
 - There are no `parameters.yaml` files in the repo yet (they are gitignored);
   create one per installation when deploying.
+- The ConfigMap's `[idle]` section opts the application in to the Data
+  Manager's automatic termination of idle instances. The Data Manager polls
+  `/idle` on port 5170 — through the instance's **Service**, not the Ingress,
+  which is why the path carries no instance prefix — and terminates an
+  instance idle for longer than `svo_idle_terminate_after`, or one that fails
+  to answer for long enough. **Only viz app versions `0.3.2-3` and later serve
+  `/idle`; earlier versions answer 404 and would be terminated as failures, so
+  they must not appear in the `dm-app.template` version enum.**
 
 ## Local checks
 
