@@ -1,0 +1,8 @@
+---
+svo_installation_name: dls-prod
+
+svo_image_tag: '35.0.0'
+svo_namespace: data-manager-viz-operator
+svo_namespaces: data-manager-api-production
+svo_ingress_domain: data-manager.xchem.diamond.ac.uk
+svo_ingress_tls_secret: data-manager-api-tls
