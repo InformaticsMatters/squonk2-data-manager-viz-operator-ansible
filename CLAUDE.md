@@ -59,8 +59,11 @@ components, the Jupyter operator, and the Data Manager).
 - `svo_image_tag` defaults to `SetMe` and **must** be overridden.
 - The CRD is annotated for Data Manager Application compliance, with
   `application-url-location` set to `viz.url`.
-- There are no `parameters.yaml` files in the repo yet (they are gitignored);
-  create one per installation when deploying.
+- Per-installation parameters live in committed `parameters-<name>.yaml` files
+  (e.g. `parameters-dls-dev.yaml`, `parameters-dls-test.yaml`,
+  `parameters-dls-prod.yaml`) — only the generic, dot-named `parameters.yaml`
+  is gitignored (a local scratch file). Add a new `parameters-<name>.yaml`
+  when deploying to an installation that doesn't have one yet.
 - The ConfigMap's `[idle]` section opts the application in to the Data
   Manager's automatic termination of idle instances. The Data Manager polls
   `/idle` on port 5170 — through the instance's **Service**, not the Ingress,
