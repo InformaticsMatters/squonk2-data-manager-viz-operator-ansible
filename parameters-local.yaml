@@ -1,0 +1,10 @@
+---
+
+svo_installation_name: local
+
+svo_image_tag: "{{ lookup('env', 'IM_DEV_VIZ_IMAGE_TAG') | default('35.0.0', True) }}"
+
+svo_namespace: im-data-manager-viz-operator
+svo_namespaces: im-data-manager
+svo_dm_namespace: im-data-manager
+svo_ingress_domain: squonk2
