@@ -89,6 +89,44 @@ spec:
                         type: string
                       id:
                         type: string
+                  # Optional. The project database (see the operator's README,
+                  # "Project database"). The database must already exist and
+                  # adminUser must be a superuser. Defaults for 'port', 'ssl'
+                  # and the 'limits' are applied by the operator.
+                  dataCentre:
+                    type: object
+                    required:
+                    - host
+                    - database
+                    - adminUser
+                    - adminPassword
+                    properties:
+                      host:
+                        type: string
+                      port:
+                        type: integer
+                        minimum: 1
+                      ssl:
+                        type: boolean
+                      database:
+                        type: string
+                      adminUser:
+                        type: string
+                      adminPassword:
+                        type: string
+                      limits:
+                        type: object
+                        properties:
+                          statementTimeout:
+                            description: Seconds
+                            type: integer
+                            minimum: 1
+                          tempFileLimitMB:
+                            type: integer
+                            minimum: 0
+                          connectionLimit:
+                            type: integer
+                            minimum: 1
                   labels:
                     type: array
                     items:
