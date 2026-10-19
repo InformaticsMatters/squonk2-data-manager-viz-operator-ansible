@@ -91,16 +91,19 @@ spec:
                       id:
                         type: string
                   # Optional. The project database (see the operator's README,
-                  # "Project database"). The database must already exist and
-                  # adminUser must be a superuser. Defaults for 'port', 'ssl'
-                  # and the 'limits' are applied by the operator.
+                  # "Project database"). The Data Manager supplies the
+                  # project's credentials (the Account Server provisions the
+                  # schema and role). Defaults for 'port' and 'ssl' are applied
+                  # by the operator. 'version' (the PostgreSQL major version)
+                  # is informational.
                   dataCentre:
                     type: object
                     required:
                     - host
                     - database
-                    - adminUser
-                    - adminPassword
+                    - schema
+                    - role
+                    - password
                     properties:
                       host:
                         type: string
@@ -111,23 +114,15 @@ spec:
                         type: boolean
                       database:
                         type: string
-                      adminUser:
+                      schema:
                         type: string
-                      adminPassword:
+                      role:
                         type: string
-                      limits:
-                        type: object
-                        properties:
-                          statementTimeout:
-                            description: Seconds
-                            type: integer
-                            minimum: 1
-                          tempFileLimitMB:
-                            type: integer
-                            minimum: 0
-                          connectionLimit:
-                            type: integer
-                            minimum: 1
+                      password:
+                        type: string
+                      version:
+                        type: integer
+                        minimum: 1
                   labels:
                     type: array
                     items:
