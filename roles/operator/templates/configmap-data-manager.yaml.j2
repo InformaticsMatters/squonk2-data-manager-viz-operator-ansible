@@ -12,6 +12,8 @@
 # It also provides a 'dm-app.template' key - a JSON string (loaded by the
 # Data Manager with json.loads()) describing the user-definable application
 # variables a client can select. It is hard-coded for now.
+# It offers no CPU or memory options: the operator fixes the viz container's
+# resource requests and limits (see squonk2-viz-components issue #468).
 #
 # Finally it provides a 'dm-app.template.mapping' key - a JSON string (also
 # loaded with json.loads()) that tells the Data Manager where each template
@@ -67,20 +69,6 @@ data:
           "description": "The choice of viz application version.",
           "type": "string",
           "enum": ["0.8.0"]
-        },
-        "memory": {
-          "title": "Memory request",
-          "description": "The viz container memory request.",
-          "type": "string",
-          "enum": ["1Gi", "2Gi", "3Gi", "4Gi", "6Gi", "8Gi"],
-          "default": "1Gi"
-        },
-        "cpu": {
-          "title": "CPU request",
-          "description": "The viz container CPU request, an integer, in units of whole CPU",
-          "type": "string",
-          "enum": ["1", "2"],
-          "default": "1"
         }
       }
     }
@@ -88,13 +76,5 @@ data:
     {
       "version": [
         "imageTag"
-      ],
-      "cpu": [
-        "resources.limits.cpu",
-        "resources.requests.cpu"
-      ],
-      "memory": [
-        "resources.limits.memory",
-        "resources.requests.memory"
       ]
     }
