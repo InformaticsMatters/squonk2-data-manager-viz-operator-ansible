@@ -90,6 +90,10 @@ spec:
                         type: string
                       id:
                         type: string
+                      # Optional. The project name. Operator 35.3.0 and later
+                      # pass it to the viz-app as DM_PROJECT_NAME.
+                      name:
+                        type: string
                   # Optional. The project database (see the operator's README,
                   # "Project database"). The Data Manager supplies the
                   # project's credentials (the Account Server provisions the
