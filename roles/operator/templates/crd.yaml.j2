@@ -127,6 +127,13 @@ spec:
                       version:
                         type: integer
                         minimum: 1
+                      # Optional. The project's size limit, in bytes.
+                      # Operator 35.4.0 and later pass it to the viz-app
+                      # as DATA_CENTRE_MAX_BYTES.
+                      maxBytes:
+                        type: integer
+                        format: int64
+                        minimum: 1
                   labels:
                     type: array
                     items:
