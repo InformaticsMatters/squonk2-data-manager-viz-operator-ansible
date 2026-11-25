@@ -51,6 +51,15 @@ spec:
                     type: string
                   ingressProxyBodySize:
                     type: string
+                  # Optional. The size limit of one import, in bytes
+                  # (squonk2-viz-components#422). 0 means no limit.
+                  # Operator 35.6.0 and later use it for the Ingress
+                  # proxy-body-size and pass it to the viz-app as
+                  # DATA_IMPORT_MAX_BYTES (not when 0).
+                  importMaxBytes:
+                    type: integer
+                    format: int64
+                    minimum: 0
                   resources:
                     type: object
                     properties:
