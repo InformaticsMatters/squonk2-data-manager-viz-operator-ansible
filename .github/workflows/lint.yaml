@@ -45,7 +45,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install yamllint pre-commit
+        pip install yamllint pre-commit ansible-core
     - name: Run pre-commit (all files)
       run: |
         pre-commit run --all-files
@@ -53,3 +53,6 @@ jobs:
       run: |
         yamllint .
         find . -type f -name '*.yaml.j2' -exec yamllint {} +
+    - name: Test
+      run: |
+        ansible-playbook tests/test-deployment-template.yaml

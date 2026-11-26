@@ -31,7 +31,8 @@ components, the Jupyter operator, and the Data Manager).
   - `tasks/` — `main` → `prep` then `deploy`/`undeploy`; `dm` → `dm-patch`.
   - `templates/*.yaml.j2` — the Kubernetes objects.
 - `inventory.yaml`, `ansible.cfg` — run against `localhost`.
-- `.github/workflows/lint.yaml` — CI (pre-commit + yamllint).
+- `tests/` — render tests for the templates (no cluster needed).
+- `.github/workflows/lint.yaml` — CI (pre-commit, yamllint and the render tests).
 
 ## Conventions (must follow)
 
@@ -80,6 +81,8 @@ components, the Jupyter operator, and the Data Manager).
     yamllint .
     # syntax-check the playbooks (needs ansible + kubernetes.core)
     ansible-playbook --syntax-check site.yaml site_dm.yaml
+    # render-test the templates (no cluster needed)
+    ansible-playbook tests/test-deployment-template.yaml
 
 [conventional commits]: https://www.conventionalcommits.org/en/v1.0.0/
 [squonk2-data-manager-jupyter-operator-ansible]: https://github.com/InformaticsMatters/squonk2-data-manager-jupyter-operator-ansible

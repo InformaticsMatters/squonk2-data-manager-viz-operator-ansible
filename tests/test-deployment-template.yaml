@@ -1,0 +1,47 @@
+---
+
+# Render tests for the operator Deployment template.
+# These need no cluster. Run them from the repository root with: -
+#
+#   ansible-playbook tests/test-deployment-template.yaml
+
+- name: Test the operator Deployment template
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+  - ../roles/operator/defaults/main.yaml
+  - ../roles/operator/vars/main.yaml
+  vars:
+    template_path: "{{ playbook_dir }}/../roles/operator/templates/deployment.yaml.j2"
+    test_auth_url: http://oauth2-proxy.oauth2.svc.cluster.local:4180/dm
+    test_auth_signin_url: https://example.com/oauth2/start?rd=$escaped_request_uri
+    test_auth_cache_duration: 200 60s
+
+  tasks:
+
+  - name: Render the Deployment with the default auth values
+    ansible.builtin.set_fact:
+      default_env: "{{ (lookup('ansible.builtin.template', template_path) | from_yaml).spec.template.spec.containers[0].env }}"
+
+  - name: Assert the default Deployment has no auth variables
+    ansible.builtin.assert:
+      that:
+      - default_env | selectattr('name', 'match', '^SVO_AUTH_') | list | length == 0
+      fail_msg: The default Deployment must not set any SVO_AUTH_ variable
+
+  - name: Render the Deployment with the auth values set
+    ansible.builtin.set_fact:
+      auth_env: "{{ (lookup('ansible.builtin.template', template_path, template_vars=auth_vars) | from_yaml).spec.template.spec.containers[0].env | items2dict(key_name='name', value_name='value') }}"
+    vars:
+      auth_vars:
+        svo_auth_url: "{{ test_auth_url }}"
+        svo_auth_signin_url: "{{ test_auth_signin_url }}"
+        svo_auth_cache_duration: "{{ test_auth_cache_duration }}"
+
+  - name: Assert the Deployment has the auth variables
+    ansible.builtin.assert:
+      that:
+      - auth_env.SVO_AUTH_URL == test_auth_url
+      - auth_env.SVO_AUTH_SIGNIN_URL == test_auth_signin_url
+      - auth_env.SVO_AUTH_CACHE_DURATION == test_auth_cache_duration
+      fail_msg: The Deployment must set each SVO_AUTH_ variable to its value

@@ -63,6 +63,11 @@ current health of your clone with: -
 
     pre-commit run --all-files
 
+The `tests` directory has render tests for the role's templates.
+They need Ansible but no cluster. Run them with: -
+
+    ansible-playbook tests/test-deployment-template.yaml
+
 ## Deploying into the Data Manager API
 We use [Ansible] and community modules in [Ansible Galaxy] as the deployment
 mechanism, using the `operator` Ansible role in this repository and a
