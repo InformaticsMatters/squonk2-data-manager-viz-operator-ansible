@@ -58,6 +58,18 @@ spec:
         - name: INGRESS_CERT_ISSUER
           value: {{ svo_ingress_cert_issuer }}
 {% endif %}
+{% if svo_auth_url %}
+        - name: SVO_AUTH_URL
+          value: '{{ svo_auth_url }}'
+{% endif %}
+{% if svo_auth_signin_url %}
+        - name: SVO_AUTH_SIGNIN_URL
+          value: '{{ svo_auth_signin_url }}'
+{% endif %}
+{% if svo_auth_cache_duration %}
+        - name: SVO_AUTH_CACHE_DURATION
+          value: '{{ svo_auth_cache_duration }}'
+{% endif %}
         # The name of the ImagePullSecret (deployed to the Data Manager
         # namespace) the operator gives to the instances it launches so they
         # can pull the private visualisation image from ghcr.
