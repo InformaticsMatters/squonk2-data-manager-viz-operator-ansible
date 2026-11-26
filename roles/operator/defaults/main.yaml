@@ -75,3 +75,22 @@ svo_cost_period: '1 hour'
 # How long an instance must have been idle before the Data Manager
 # terminates it, expressed as text it can interpret (e.g. '90 minutes').
 svo_idle_terminate_after: '36 hours'
+
+# Ingress authentication (role check) of the visualisation instances.
+# These are passed to the operator through the environment
+# and need operator 35.5.0 or later. Each is left out when it is empty.
+# Do not set 'svo_auth_url' until the Data Manager, oauth2-proxy,
+# viz-app and NetworkPolicy support exists (see issue 35),
+# because every new instance then requires a Data Manager login.
+#
+# The base URL that nginx calls to check the user's project role.
+# The operator adds '/project/<project-id>/role' to it.
+# An empty value turns the role check off.
+# For example 'http://oauth2-proxy.<namespace>.svc.cluster.local:4180/dm'
+svo_auth_url: ''
+# The public URL where nginx sends a user who is not logged in.
+# For example 'https://<ingress-domain>/oauth2/start?rd=$escaped_request_uri'
+svo_auth_signin_url: ''
+# How long nginx caches a role check.
+# Empty uses the operator default ('200 60s').
+svo_auth_cache_duration: ''
